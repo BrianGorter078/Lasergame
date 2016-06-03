@@ -1,26 +1,30 @@
 package com.briang.lasergame;
 
+import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.widget.TextView;
+import android.view.View;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar mActionBarToolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private TextView toolbarTitle;
+    @BindView(R.id.toolbar) Toolbar mActionBarToolbar;
+    @BindView(R.id.tabs) TabLayout tabLayout;
+    @BindView(R.id.viewpager) ViewPager viewPager;
     private int[] tabIcons = {
             R.drawable.ic_home,
             R.drawable.ic_settings
@@ -30,51 +34,50 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mActionBarToolbar);
-//        getSupportActionBar().setTitle("Home");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeButtonEnabled(false);
+//        getSupportActionBar().setTitle("Home");
+        //getSupportActionBar().setHomeButtonEnabled(false);
 
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-
-        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
 
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        tabLayout.setOnTabSelectedListener(onTabSelectedListener());
+        setupTabIcons();
+
+    }
 
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+    /**
+     * Listener for Tabs underneath the status bar
+     * @return onTabSelectedListener
+     */
+    private TabLayout.OnTabSelectedListener onTabSelectedListener() {
+
+        return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(tab.getPosition() == 0)
-                {
-                    toolbarTitle.setText("Home");
-                }
-                else {
-                    toolbarTitle.setText("Stats");
-                }
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });
-
-
-        setupTabIcons();
+        };
     }
+
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -87,6 +90,48 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
     }
+
+
+    public void Hello(View view){
+        View checkBoxView = View.inflate(this, R.layout.new_game, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create Room")
+                .setView(checkBoxView)
+
+                .setCancelable(false)
+                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    /*public void Hello(View view) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Create a new Game");
+        // Create TextView
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                input.setText("hi");
+                // Do something with value!
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        alert.show();
+    }*/
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -112,9 +157,5 @@ public class MainActivity extends AppCompatActivity {
             mFragmentList.add(fragment);
         }
 
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-////            return mFragmentTitleList.get(position);
-//        }
     }
 }
