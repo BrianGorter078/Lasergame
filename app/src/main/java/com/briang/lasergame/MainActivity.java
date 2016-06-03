@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
+    @BindView(R.id.toolbar_title)
+    TextView textView;
     private int[] tabIcons = {
             R.drawable.ic_home,
             R.drawable.ic_settings
@@ -67,7 +70,16 @@ public class MainActivity extends AppCompatActivity {
         return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
+
+
+                if(tab.getPosition() == 0)
+                {
+                    textView.setText("Home");
+                }
+                else
+                {
+                    textView.setText("Stats");
+                }
             }
 
             @Override

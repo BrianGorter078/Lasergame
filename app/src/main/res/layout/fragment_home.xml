@@ -5,7 +5,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello"
+        android:text="@string/play_game"
         android:textSize="40dp"
         android:textStyle="bold"
         android:id="@+id/textView2"
@@ -18,20 +18,22 @@
         <Button
             android:layout_width="131dp"
             android:layout_height="78dp"
-            android:text="New Game"
+            android:text="@string/play_a_game"
             style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/button2"
             android:layout_gravity="center_horizontal|top"
-            android:layout_marginTop="50dp"
             android:onClick="Hello"
-            android:layout_below="@+id/textView2"
+            android:textSize="13dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_centerVertical="true"
             android:layout_alignLeft="@+id/button3"
             android:layout_alignStart="@+id/button3" />
 
         <Button
             android:layout_width="131dp"
             android:layout_height="78dp"
-            android:text="Join Game"
+            android:text="@string/joingame"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:id="@+id/button3"
             android:layout_gravity="center"

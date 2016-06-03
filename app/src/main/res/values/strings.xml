@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">Lasergame</string>
-    <string name="hello">Hello</string>
+    <string name="stats">Statistieken</string>
+    <string name="play_game">Play now!</string>
     <string name="hello_world">Speel binnenkort!</string>
     <string name="action_settings">Settings</string>
+    <string name="newgame">New Game</string>
+    <string name="joingame">Join Game</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="play_a_game">Create Game</string>
 </resources>
