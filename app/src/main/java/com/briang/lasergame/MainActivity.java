@@ -22,9 +22,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar) Toolbar mActionBarToolbar;
-    @BindView(R.id.tabs) TabLayout tabLayout;
-    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.toolbar)
+    Toolbar mActionBarToolbar;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
     private int[] tabIcons = {
             R.drawable.ic_home,
             R.drawable.ic_settings
@@ -54,9 +57,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Listener for Tabs underneath the status bar
+     *
      * @return onTabSelectedListener
      */
     private TabLayout.OnTabSelectedListener onTabSelectedListener() {
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void Hello(View view){
+    public void Hello(View view) {
         View checkBoxView = View.inflate(this, R.layout.new_game, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -110,28 +113,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).show();
     }
-
-    /*public void Hello(View view) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Create a new Game");
-        // Create TextView
-        final EditText input = new EditText(this);
-        alert.setView(input);
-
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                input.setText("hi");
-                // Do something with value!
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-        alert.show();
-    }*/
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
