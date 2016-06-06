@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
     @BindView(R.id.toolbar_title)
-    TextView textView;
+    TextView title;
     private int[] tabIcons = {
             R.drawable.ic_home,
             R.drawable.ic_settings
@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mActionBarToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeButtonEnabled(false);
-//        getSupportActionBar().setTitle("Home");
-        //getSupportActionBar().setHomeButtonEnabled(false);
 
         setupViewPager(viewPager);
 
@@ -70,16 +68,12 @@ public class MainActivity extends AppCompatActivity {
         return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
-
-                if(tab.getPosition() == 0)
-                {
-                    textView.setText("Home");
+                if (tab.getPosition() == 0){
+                    title.setText("Home");
+                } else {
+                    title.setText("Stats");
                 }
-                else
-                {
-                    textView.setText("Stats");
-                }
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
