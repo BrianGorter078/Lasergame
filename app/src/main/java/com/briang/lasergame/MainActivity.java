@@ -1,19 +1,18 @@
 package com.briang.lasergame;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AsyncResponse{
+
+    OkHttpGet okHttpGet = new OkHttpGet();
 
     @BindView(R.id.toolbar)
     Toolbar mActionBarToolbar;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     @BindView(R.id.toolbar_title)
     TextView title;
+
     private int[] tabIcons = {
             R.drawable.ic_home,
             R.drawable.ic_settings
@@ -55,9 +57,35 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setOnTabSelectedListener(onTabSelectedListener());
         setupTabIcons();
 
+        okHttpGet.delegate = this;
+        getRequest("http://laser-web.herokuapp.com/healthpoints ");
+
+
     }
 
 
+    /**
+     * This overrides the implemented method from asyncTask
+     * This method gets the response from the asyncTask
+     *
+     * @param output
+     */
+    public void processFinish(String output){
+        //Here you will receive the result fired from async class
+        //of onPostExecute(result) method.
+        Log.d("Response" , output);
+
+    }
+
+    /**
+     * Executes a http getRequest from the requested URl
+     *
+     * @param url
+     */
+    public void getRequest(String url)
+    {
+        okHttpGet.execute(url);
+    }
     /**
      * Listener for Tabs underneath the status bar
      *
@@ -145,4 +173,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
 }
