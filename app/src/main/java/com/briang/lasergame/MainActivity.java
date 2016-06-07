@@ -1,18 +1,18 @@
 package com.briang.lasergame;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
+import com.briang.lasergame.Connections.AsyncResponse;
+import com.briang.lasergame.Connections.OkHttpGet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements AsyncResponse{
+public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     OkHttpGet okHttpGet = new OkHttpGet();
 
@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        String deviceId = Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
 
         setSupportActionBar(mActionBarToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -58,9 +61,10 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         setupTabIcons();
 
         okHttpGet.delegate = this;
-        getRequest("http://laser-web.herokuapp.com/healthpoints ");
+        getRequest("http://laser-web.herokuapp.com/game");
 
 
+        System.out.println("UID is : " + deviceId);
     }
 
 
@@ -79,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     /**
      * Executes a http getRequest from the requested URl
-     *
      * @param url
      */
     public void getRequest(String url)
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
                     title.setText("Home");
                 } else {
                     title.setText("Stats");
+
                 }
                 viewPager.setCurrentItem(tab.getPosition());
             }
@@ -118,8 +122,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Home(), "One");
-        adapter.addFragment(new Stats(), "TWO");
+        adapter.addFragment(new Home(), "Home");
+        adapter.addFragment(new Stats(), "Stats");
         viewPager.setAdapter(adapter);
     }
 
@@ -129,24 +133,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     }
 
 
-    public void Hello(View view) {
-        View checkBoxView = View.inflate(this, R.layout.new_game, null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Create Room")
-                .setView(checkBoxView)
-
-                .setCancelable(false)
-                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                }).show();
-    }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -168,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
             return mFragmentList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
+        public void addFragment(Fragment fragment, String t) {
             mFragmentList.add(fragment);
         }
 

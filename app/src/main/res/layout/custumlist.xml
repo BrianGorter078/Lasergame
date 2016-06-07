@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@color/colorAccent"
     android:paddingTop="5dp"
+    android:background="@color/colorAccent"
     android:paddingRight="5dp">
 
 
@@ -11,24 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Game id: 1515"
+        android:text="Name"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:textColor="@color/textColorPrimary"
         android:id="@+id/textView"
-        android:layout_marginLeft="10dp"
-        android:textStyle="bold"
-        android:layout_marginTop="5dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Win/Loss"
-        android:textColor="@color/textColorPrimary"
-        android:id="@+id/textView2"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
+        android:textStyle="bold" />
 </RelativeLayout>

@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.briang.lasergame.R;
+
 
 public class Stats extends Fragment{
 

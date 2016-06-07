@@ -1,4 +1,4 @@
-package com.briang.lasergame;
+package com.briang.lasergame.Connections;
 
 /**
  * Created by Brian on 6-6-2016.

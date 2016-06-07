@@ -1,4 +1,4 @@
-package com.briang.lasergame;
+package com.briang.lasergame.Connections;
 
 import android.os.AsyncTask;
 
@@ -38,5 +38,8 @@ public class OkHttpGet extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result){
         delegate.processFinish(result);
     }
+
+
+
 }
 
