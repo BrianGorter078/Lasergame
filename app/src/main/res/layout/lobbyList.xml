@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:paddingTop="5dp"
+    android:background="@color/colorAccent"
+    android:paddingRight="5dp">
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Name"
+        android:textColor="@color/textColorPrimary"
+        android:id="@+id/roomName"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="@color/textColorPrimary"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:id="@+id/playersInRoom"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center_horizontal"
+        android:text="rrr"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="@color/textColorPrimary"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center_horizontal"
+        android:text="Players"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="40dp"
+        android:layout_alignEnd="@+id/playersInRoom"
+        android:layout_marginEnd="50dp" />
+</RelativeLayout>

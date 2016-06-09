@@ -10,7 +10,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/lobbyList"
+        android:id="@+id/playerlist"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/include"
         />

@@ -22,7 +22,7 @@
         <activity
             android:name=".Lobby"
             android:label="@string/title_activity_lobby"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".Joinlobby"
             android:theme="@style/MyMaterialTheme">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->

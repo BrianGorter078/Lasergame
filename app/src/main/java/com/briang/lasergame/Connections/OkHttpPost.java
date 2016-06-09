@@ -1,6 +1,7 @@
 package com.briang.lasergame.Connections;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -22,23 +23,27 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String...url)  {
         {
-            RequestBody body = RequestBody.create(JSON, "");
-            Request request = new Request.Builder()
-                    .url(url[0])
-                    .post(body)
-                    .build();
+            for (int i = 0; i < url.length; i++) {
 
-            try {
-                Response response = client.newCall(request).execute();
-                result = response.body().string();
+                RequestBody body = RequestBody.create(JSON, "");
+                Request request = new Request.Builder()
+                        .url(url[i])
+                        .post(body)
+                        .build();
 
-                return result;
-            }catch (Exception e)
-            {}
+                try {
+                    Response response = client.newCall(request).execute();
+                    result = response.body().string();
+
+                    Log.d("int", i + result + url.length);
+
+                } catch (Exception e) {
+                }
+            }
+
+
+            return result;
         }
-
-
-        return result;
     }
 
     protected void onPostExecute(String result){

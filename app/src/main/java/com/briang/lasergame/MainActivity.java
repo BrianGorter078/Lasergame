@@ -22,7 +22,6 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
-    OkHttpGet okHttpGet = new OkHttpGet();
 
     @BindView(R.id.toolbar)
     Toolbar mActionBarToolbar;
@@ -43,8 +42,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        String deviceId = Settings.Secure.getString(this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+
 
 
         setSupportActionBar(mActionBarToolbar);
@@ -60,11 +58,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         tabLayout.setOnTabSelectedListener(onTabSelectedListener());
         setupTabIcons();
 
-        okHttpGet.delegate = this;
-        getRequest("http://laser-web.herokuapp.com/game");
 
 
-        System.out.println("UID is : " + deviceId);
+
     }
 
 
@@ -81,14 +77,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     }
 
-    /**
-     * Executes a http getRequest from the requested URl
-     * @param url
-     */
-    public void getRequest(String url)
-    {
-        okHttpGet.execute(url);
-    }
     /**
      * Listener for Tabs underneath the status bar
      *
