@@ -55,6 +55,7 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
         title.setText("Lobbies");
         okHttpGet.delegate = this;
+        okHttpPost.delegate = this;
 
         getRequest("http://laser-web.herokuapp.com/game");
     }
@@ -94,6 +95,11 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
                     Intent intent = new Intent(getApplicationContext(), Lobby.class);
                     intent.putExtra("roomName",room);
+
+
+                    String addPlayer = "http://laser-web.herokuapp.com/game/" +room + "/123/"+ deviceId;
+                    okHttpPost.execute(addPlayer);
+
 
                     startActivity(intent);
                 }

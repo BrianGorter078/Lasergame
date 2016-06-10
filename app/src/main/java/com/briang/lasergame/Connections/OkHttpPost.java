@@ -47,7 +47,8 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
     }
 
     protected void onPostExecute(String result){
-        delegate.processFinish(result);
+//        delegate.processFinish(result);
+
     }
 
 
