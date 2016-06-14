@@ -2,14 +2,14 @@ package com.briang.lasergame;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,16 +22,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class Lobby extends AppCompatActivity implements AsyncResponse {
 
-
-    private Boolean firstRun = true;
     private String roomName;
     private String password;
     private String deviceId;
+    private String[] players;
 
     @BindView(R.id.playerlist)
     ListView playerlist;
@@ -60,9 +62,8 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
 
 
-
         title.setText(roomName);
-        
+
 
         getRequest();
 
@@ -70,13 +71,20 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
             @Override
             public void onRefresh() {
                 swipe.setRefreshing(true);
+                swipe.animate();
                 getRequest();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 swipe.setRefreshing(false);
+            }
+        });
+
+        playerlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Intent intent = new Intent(getApplicationContext(), game.class);
+                intent.putExtra("Roomname", players[i]);
+
+
             }
         });
 
@@ -110,7 +118,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         if(!output.contains("<html>"))
         try {
             JSONArray arr = new JSONArray(output);
-            String[] players = new String[arr.length()];
+            players = new String[arr.length()];
 
 
 
@@ -128,7 +136,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
                 itemsAdapter.setNotifyOnChange(true);
                 playerlist.setAdapter(itemsAdapter);
 
-                firstRun = false;
+
 
 
 
