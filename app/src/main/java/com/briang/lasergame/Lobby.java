@@ -2,27 +2,25 @@ package com.briang.lasergame;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.briang.lasergame.Connections.AsyncResponse;
 import com.briang.lasergame.Connections.OkHttpGet;
-import com.briang.lasergame.Models.Room;
+import com.briang.lasergame.Connections.OkHttpPost;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,9 +28,10 @@ import butterknife.ButterKnife;
 public class Lobby extends AppCompatActivity implements AsyncResponse {
 
 
-    OkHttpGet okHttpGet = new OkHttpGet();
-
-
+    private Boolean firstRun = true;
+    private String roomName;
+    private String password;
+    private String deviceId;
 
     @BindView(R.id.playerlist)
     ListView playerlist;
@@ -40,6 +39,8 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     TextView title;
     @BindView(R.id.include)
     Toolbar toolbar;
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout swipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,9 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
 
         Intent intent = getIntent();
-        String roomName = intent.getExtras().getString("roomName");
+        roomName = intent.getExtras().getString("roomName");
+        password = intent.getExtras().getString("password");
+        deviceId = intent.getExtras().getString("deviceId");
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -59,21 +62,34 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
 
         title.setText(roomName);
-        title.setGravity(Gravity.CENTER_HORIZONTAL);
+        
 
+        getRequest();
 
-        okHttpGet.delegate = this;
-        okHttpGet.execute("http://laser-web.herokuapp.com/game/"+roomName+"/players");
-
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe.setRefreshing(true);
+                getRequest();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                swipe.setRefreshing(false);
+            }
+        });
 
     }
 
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        // TODO: 09-06-16 Add backpressed logic like
+    protected void onPause() {
+        Log.d("remove", "playerRemoved");
+        postRequest();
+        super.onPause();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -90,6 +106,8 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     public void processFinish(String output) {
         Log.d("players", output);
 
+
+        if(!output.contains("<html>"))
         try {
             JSONArray arr = new JSONArray(output);
             String[] players = new String[arr.length()];
@@ -104,13 +122,30 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
             }
 
-            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, R.layout.playerlist,R.id.playerName,players);
+                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, R.layout.playerlist, R.id.playerName, players);
 
-            playerlist.setAdapter(itemsAdapter);
+
+                itemsAdapter.setNotifyOnChange(true);
+                playerlist.setAdapter(itemsAdapter);
+
+                firstRun = false;
+
+
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+    public void getRequest(){
+        OkHttpGet okHttpGet = new OkHttpGet();
+        okHttpGet.delegate = this;
+        okHttpGet.execute(okHttpGet.getPlayers(roomName));
+    }
+
+    public void postRequest(){
+        OkHttpPost okHttpPost = new OkHttpPost();
+        okHttpPost.delegate = this;
+        okHttpPost.execute(okHttpPost.removePlayer(roomName,password,deviceId));
     }
 }

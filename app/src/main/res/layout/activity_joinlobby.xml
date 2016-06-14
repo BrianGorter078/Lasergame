@@ -10,10 +10,17 @@
         android:id="@+id/include2">
     </include>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeRefresh"
+        android:layout_below="@id/include2">
+
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:id="@+id/joinlobbyView"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/include2" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

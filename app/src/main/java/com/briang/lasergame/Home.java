@@ -75,9 +75,9 @@ public class Home extends Fragment implements AsyncResponse
                                     room = roomName.getText().toString();
                                     pass = password.getText().toString();
 
-                                    String createLobby = "http://laser-web.herokuapp.com/newgame/"+room+"/"+pass;
-                                    String addPlayer = "http://laser-web.herokuapp.com/game/"+room+"/"+pass+"/"+deviceId;
-                                    okHttpPost.execute(createLobby, addPlayer);
+
+
+                                    okHttpPost.execute(okHttpPost.createRoom(room,pass), okHttpPost.addPlayer(room,pass,deviceId));
 
 
                                     Intent intent = new Intent(getContext(), Lobby.class);

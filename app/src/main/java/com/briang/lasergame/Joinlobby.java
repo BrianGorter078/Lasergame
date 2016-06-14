@@ -1,17 +1,14 @@
 package com.briang.lasergame;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.provider.Settings;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,7 +16,6 @@ import com.briang.lasergame.Connections.AsyncResponse;
 import com.briang.lasergame.Connections.OkHttpGet;
 import com.briang.lasergame.Connections.OkHttpPost;
 import com.briang.lasergame.Models.Room;
-import com.briang.lasergame.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,10 +28,13 @@ import butterknife.ButterKnife;
 
 public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
-    OkHttpGet okHttpGet = new OkHttpGet();
+
     ArrayList<JSONObject> roomList = new ArrayList<>();
     OkHttpPost okHttpPost = new OkHttpPost();
     String room;
+    private String password = "123";
+    private String deviceId = "";
+
 
     @BindView(R.id.joinlobbyView)
     ListView joinLobbylist;
@@ -43,28 +42,55 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
     TextView title;
     @BindView(R.id.include2)
     Toolbar toolbar;
+    @BindView(R.id.swipeRefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joinlobby);
+
+        deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        title.setText("Lobbies");
-        okHttpGet.delegate = this;
+
+        title.setText("Active Games");
         okHttpPost.delegate = this;
 
-        getRequest("http://laser-web.herokuapp.com/game");
+
+        getRequest();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                getRequest();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
-    public void processFinish(String output) {
+    public void onBackPressed() {
+        postRequest("Remove");
+        super.onBackPressed();
+    }
 
-        final String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+    @Override
+    protected void onResume() {
+        getRequest();
+
+        super.onResume();
+    }
+
+
+
+    @Override
+    public void processFinish(String output) {
 
         try {
             JSONArray arr = new JSONArray(output);
@@ -91,17 +117,16 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
                     room = arrayOfUsers.get(i).roomName;
 
-
-
                     Intent intent = new Intent(getApplicationContext(), Lobby.class);
                     intent.putExtra("roomName",room);
+                    intent.putExtra("password",password);
+                    intent.putExtra("deviceId",deviceId);
 
 
-                    String addPlayer = "http://laser-web.herokuapp.com/game/" +room + "/123/"+ deviceId;
-                    okHttpPost.execute(addPlayer);
-
+                    postRequest("Add");
 
                     startActivity(intent);
+
                 }
             });
 
@@ -117,10 +142,29 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
     /**
      * Executes a http getRequest from the requested URl
-     * @param url
      */
-    public void getRequest(String url)
+    public void getRequest()
     {
-        okHttpGet.execute(url);
+        OkHttpGet ok = new OkHttpGet();
+        ok.delegate = this;
+        ok.execute(ok.getGames());
+
     }
+    public void postRequest(String doing)
+    {
+
+        OkHttpPost post = new OkHttpPost();
+        post.delegate = this;
+
+        Log.d("Test", room + password + deviceId);
+
+        if(doing.equals("Add")){
+            post.execute(post.addPlayer(room,password,deviceId));
+        }
+        else if(doing.equals("Remove")) {
+            post.execute(post.removePlayer(room,password,deviceId));
+        }
+
+    }
+
 }
