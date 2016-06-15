@@ -2,6 +2,7 @@ package com.briang.lasergame;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,8 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     private String password;
     private String deviceId;
     private String[] players;
+    private Timer waitingTimer;
+
 
     @BindView(R.id.playerlist)
     ListView playerlist;
@@ -51,7 +54,6 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         ButterKnife.bind(this);
 
 
-
         Intent intent = getIntent();
         roomName = intent.getExtras().getString("roomName");
         password = intent.getExtras().getString("password");
@@ -59,7 +61,6 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
 
         title.setText(roomName);
@@ -87,12 +88,32 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
             }
         });
+        runInBackground();
 
     }
 
 
+    private void runInBackground() {
+        waitingTimer = new Timer();
+        waitingTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        getState();
+                    }
+                });
+            }
+        }, 0, 1000);
+    }
+
+    private void cancelRunInBackground() {
+        waitingTimer.cancel();
+    }
+
     @Override
     protected void onPause() {
+        cancelRunInBackground();
         Log.d("remove", "playerRemoved");
         postRequest();
         super.onPause();
@@ -106,6 +127,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
         }
+        cancelRunInBackground();
         return super.onOptionsItemSelected(item);
     }
 
@@ -115,20 +137,18 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         Log.d("players", output);
 
 
-        if(!output.contains("<html>"))
-        try {
-            JSONArray arr = new JSONArray(output);
-            players = new String[arr.length()];
+        if (!output.contains("<html>"))
+            try {
+                JSONArray arr = new JSONArray(output);
+                players = new String[arr.length()];
 
 
+                for (int i = 0; i < arr.length(); i++) {
 
-            for(int i = 0; i < arr.length(); i++)
-            {
+                    JSONObject obj = arr.getJSONObject(i);
+                    players[i] = obj.getString("playerid");
 
-                JSONObject obj = arr.getJSONObject(i);
-                players[i] =  obj.getString("playerid");
-
-            }
+                }
 
                 ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, R.layout.playerlist, R.id.playerName, players);
 
@@ -137,23 +157,27 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
                 playerlist.setAdapter(itemsAdapter);
 
 
-
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
     }
-    public void getRequest(){
+
+
+    public void getRequest() {
         OkHttpGet okHttpGet = new OkHttpGet();
         okHttpGet.delegate = this;
         okHttpGet.execute(okHttpGet.getPlayers(roomName));
     }
 
-    public void postRequest(){
+    public void getState() {
+        OkHttpGet okHttpGet = new OkHttpGet();
+        okHttpGet.delegate = this;
+        okHttpGet.execute(okHttpGet.getState(roomName));
+    }
+
+    public void postRequest() {
         OkHttpPost okHttpPost = new OkHttpPost();
         okHttpPost.delegate = this;
-        okHttpPost.execute(okHttpPost.removePlayer(roomName,password,deviceId));
+        okHttpPost.execute(okHttpPost.removePlayer(roomName, password, deviceId));
     }
 }
