@@ -151,10 +151,14 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         okHttpGet.delegate = this;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 //        okHttpGet.execute(okHttpGet.getState(roomName));
 =======
         okHttpGet.execute(okHttpGet.getPlayers(roomName));
 >>>>>>> parent of 2bcac26... update long polling lobby
+=======
+        okHttpGet.execute(okHttpGet.getState(roomName));
+>>>>>>> parent of d7ffc45... changes changes everywhere
 =======
         okHttpGet.execute(okHttpGet.getState(roomName));
 >>>>>>> parent of d7ffc45... changes changes everywhere
