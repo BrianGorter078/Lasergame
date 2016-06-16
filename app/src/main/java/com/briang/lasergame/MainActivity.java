@@ -11,8 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.TextView;
+
 import com.briang.lasergame.Connections.AsyncResponse;
-import com.briang.lasergame.Connections.OkHttpGet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     @BindView(R.id.toolbar_title)
     TextView title;
 
+    public static String deviceId;
+
     private int[] tabIcons = {
             R.drawable.ic_home,
             R.drawable.ic_settings
@@ -42,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
 
 
 
@@ -58,11 +63,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         tabLayout.setOnTabSelectedListener(onTabSelectedListener());
         setupTabIcons();
 
-
-
-
     }
-
 
     /**
      * This overrides the implemented method from asyncTask
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     public void processFinish(String output){
         //Here you will receive the result fired from async class
         //of onPostExecute(result) method.
-        Log.d("Response" , output);
+        Log.d("Response", output);
 
     }
 

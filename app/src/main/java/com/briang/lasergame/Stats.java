@@ -1,16 +1,18 @@
 package com.briang.lasergame;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.briang.lasergame.R;
+import android.widget.TextView;
 
 
 public class Stats extends Fragment{
 
+
+    String deviceId;
     public Stats() {
         // Required empty public constructor
     }
@@ -18,13 +20,29 @@ public class Stats extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stats, container, false);
+        View v = inflater.inflate(R.layout.fragment_stats, container, false);
+
+        TextView id = (TextView) v.findViewById(R.id.yourId);
+
+        deviceId = Settings.Secure.getString(getActivity().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        id.setText(deviceId);
+
+
+
+
+        return v;
     }
 
 }

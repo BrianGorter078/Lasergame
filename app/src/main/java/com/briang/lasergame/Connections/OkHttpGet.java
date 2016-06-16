@@ -25,14 +25,29 @@ public class OkHttpGet extends AsyncTask<String, String, String> {
     }
 
     /**
-     * Creates a getString to get all players in a game
+     *
+     * @param room Roomname
+     * @return String to get lobby state
+     */
+    public String getState(String room) {
+        final String getState = "http://laser-web.herokuapp.com/game/" + room;
+        return getState;
+    }
+
+    /**
+     * Creates a getString to get all players in a Game
      * @param room roomName
-     * @return String to get all players in a game
+     * @return String to get all players in a Game
      */
     public String getPlayers(String room) {
 
         final String getPlayers = "http://laser-web.herokuapp.com/game/"+room+"/players";
         return getPlayers;
+    }
+
+    public String getHealth(String room){
+        final String getHealth = "http://laser-web.herokuapp.com/healtpoints/" + room;
+        return getHealth;
     }
 
 
@@ -41,15 +56,12 @@ public class OkHttpGet extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String...url)  {
         {
-
             Request request = new Request.Builder()
                     .url(url[0])
                     .build();
-
            try {
                Response response = client.newCall(request).execute();
                result = response.body().string();
-
                 return result;
             }catch (Exception e)
             {}

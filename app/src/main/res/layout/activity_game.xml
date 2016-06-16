@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.briang.lasergame.game">
+    tools:context="com.briang.lasergame.Game">
 
 
     <include layout="@layout/toolbar"
-        android:id="@+id/gameTool"></include>
+        android:id="@+id/gameToolbar"></include>
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,6 +27,7 @@
         android:layout_above="@+id/countDown"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="68dp" />
+
 
 
 </RelativeLayout>

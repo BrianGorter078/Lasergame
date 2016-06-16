@@ -6,7 +6,6 @@ import android.provider.Settings;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -101,12 +100,16 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
             for(int i = 0; i < arr.length(); i++)
             {
                 JSONObject obj = arr.getJSONObject(i);
+
+
                 roomList.add(obj);
-                Room r = new Room(roomList.get(i).getString("roomname"), roomList.get(i).getString("players"));
+
+                Room r = new Room(roomList.get(i).getString("roomname"), roomList.get(i).getString("players"),roomList.get(i).getBoolean("state"));
+
+                if(r.state)
                 arrayOfUsers.add(r);
 
             }
-
 
             RoomsAdapter itemsAdapter = new RoomsAdapter(this, arrayOfUsers);
             joinLobbylist.setAdapter(itemsAdapter);
@@ -150,13 +153,12 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
         ok.execute(ok.getGames());
 
     }
+
     public void postRequest(String doing)
     {
 
         OkHttpPost post = new OkHttpPost();
         post.delegate = this;
-
-        Log.d("Test", room + password + deviceId);
 
         if(doing.equals("Add")){
             post.execute(post.addPlayer(room,password,deviceId));

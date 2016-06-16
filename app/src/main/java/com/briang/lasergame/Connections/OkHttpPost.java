@@ -88,5 +88,11 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
 
         return createroom;
     }
+
+    public String startGame(String roomName){
+        final String startGame = "http://laser-web.herokuapp.com/startgame/"+ roomName + "/123/true";
+
+        return startGame;
+    }
 }
 

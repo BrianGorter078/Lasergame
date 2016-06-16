@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/refresh"
-        android:layout_below="@id/include">
+        android:layout_below="@id/include"
+        android:layout_above="@+id/StartGame">
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -19,10 +20,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Game"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/StartGame"
         android:onClick="StartGame"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentEnd="true" />
 
     <ListView
         android:layout_width="match_parent"
