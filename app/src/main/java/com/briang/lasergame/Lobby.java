@@ -2,6 +2,7 @@ package com.briang.lasergame;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -56,7 +57,9 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         Intent intent = getIntent();
         roomName = intent.getExtras().getString("roomName");
         password = intent.getExtras().getString("password");
-        deviceId = intent.getExtras().getString("deviceId");
+
+        deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

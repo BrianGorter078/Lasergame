@@ -51,6 +51,7 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
         deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -123,7 +124,6 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
                     Intent intent = new Intent(getApplicationContext(), Lobby.class);
                     intent.putExtra("roomName",room);
                     intent.putExtra("password",password);
-                    intent.putExtra("deviceId",deviceId);
 
 
                     postRequest("Add");
