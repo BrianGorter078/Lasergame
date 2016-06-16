@@ -9,6 +9,24 @@
     <include layout="@layout/toolbar"
         android:id="@+id/gameTool"></include>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/countDown"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Game Starts in"
+        android:id="@+id/textView"
+        android:layout_above="@+id/countDown"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="68dp" />
 
 
 </RelativeLayout>

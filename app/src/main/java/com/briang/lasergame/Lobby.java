@@ -149,28 +149,18 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     public void getRequest(){
         OkHttpGet okHttpGet = new OkHttpGet();
         okHttpGet.delegate = this;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-//        okHttpGet.execute(okHttpGet.getState(roomName));
-=======
         okHttpGet.execute(okHttpGet.getPlayers(roomName));
->>>>>>> parent of 2bcac26... update long polling lobby
-=======
-        okHttpGet.execute(okHttpGet.getState(roomName));
->>>>>>> parent of d7ffc45... changes changes everywhere
-=======
-        okHttpGet.execute(okHttpGet.getState(roomName));
->>>>>>> parent of d7ffc45... changes changes everywhere
-=======
-        okHttpGet.execute(okHttpGet.getState(roomName));
->>>>>>> parent of d7ffc45... changes changes everywhere
+
     }
 
     public void postRequest(){
         OkHttpPost okHttpPost = new OkHttpPost();
         okHttpPost.delegate = this;
         okHttpPost.execute(okHttpPost.removePlayer(roomName,password,deviceId));
+    }
+
+    public void StartGame(View view) {
+        Intent intent = new Intent(this, game.class);
+        startActivity(intent);
     }
 }
