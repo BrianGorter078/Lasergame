@@ -2,6 +2,7 @@ package com.briang.lasergame;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -149,10 +150,14 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         OkHttpGet okHttpGet = new OkHttpGet();
         okHttpGet.delegate = this;
 <<<<<<< HEAD
+<<<<<<< HEAD
 //        okHttpGet.execute(okHttpGet.getState(roomName));
 =======
         okHttpGet.execute(okHttpGet.getPlayers(roomName));
 >>>>>>> parent of 2bcac26... update long polling lobby
+=======
+        okHttpGet.execute(okHttpGet.getState(roomName));
+>>>>>>> parent of d7ffc45... changes changes everywhere
     }
 
     public void postRequest(){
