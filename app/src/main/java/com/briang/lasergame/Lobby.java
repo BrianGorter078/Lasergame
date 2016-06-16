@@ -2,14 +2,14 @@ package com.briang.lasergame;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,20 +22,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class Lobby extends AppCompatActivity implements AsyncResponse {
 
+
+    private Boolean firstRun = true;
     private String roomName;
     private String password;
     private String deviceId;
+<<<<<<< HEAD
     private String[] players;
     private Timer waitingTimer;
 
+=======
+>>>>>>> parent of c13c9b7... push
 
     @BindView(R.id.playerlist)
     ListView playerlist;
@@ -62,8 +64,14 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+<<<<<<< HEAD
         title.setText(roomName);
+=======
 
+>>>>>>> parent of c13c9b7... push
+
+        title.setText(roomName);
+        
 
         getRequest();
 
@@ -71,12 +79,17 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
             @Override
             public void onRefresh() {
                 swipe.setRefreshing(true);
-                swipe.animate();
                 getRequest();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 swipe.setRefreshing(false);
             }
         });
 
+<<<<<<< HEAD
         playerlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -89,6 +102,8 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         });
         runInBackground();
 
+=======
+>>>>>>> parent of c13c9b7... push
     }
 
 
@@ -136,10 +151,17 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         Log.d("players", output);
 
 
+<<<<<<< HEAD
         if (!output.contains("<html>"))
             try {
                 JSONArray arr = new JSONArray(output);
                 players = new String[arr.length()];
+=======
+        if(!output.contains("<html>"))
+        try {
+            JSONArray arr = new JSONArray(output);
+            String[] players = new String[arr.length()];
+>>>>>>> parent of c13c9b7... push
 
 
                 for (int i = 0; i < arr.length(); i++) {
@@ -155,11 +177,15 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
                 itemsAdapter.setNotifyOnChange(true);
                 playerlist.setAdapter(itemsAdapter);
 
+<<<<<<< HEAD
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
     }
+=======
+                firstRun = false;
+>>>>>>> parent of c13c9b7... push
 
 
     public void getRequest() {
