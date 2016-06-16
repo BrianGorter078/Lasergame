@@ -20,7 +20,6 @@ public class OkHttpGet extends AsyncTask<String, String, String> {
      */
     public String getGames() {
         final String getGames = "http://laser-web.herokuapp.com/game";
-
         return getGames;
     }
 
@@ -30,7 +29,6 @@ public class OkHttpGet extends AsyncTask<String, String, String> {
      * @return String to get all players in a game
      */
     public String getPlayers(String room) {
-
         final String getPlayers = "http://laser-web.herokuapp.com/game/"+room+"/players";
         return getPlayers;
     }

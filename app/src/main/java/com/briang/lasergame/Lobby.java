@@ -2,7 +2,6 @@ package com.briang.lasergame;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -172,7 +171,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     public void getState() {
         OkHttpGet okHttpGet = new OkHttpGet();
         okHttpGet.delegate = this;
-        okHttpGet.execute(okHttpGet.getState(roomName));
+//        okHttpGet.execute(okHttpGet.getState(roomName));
     }
 
     public void postRequest() {
