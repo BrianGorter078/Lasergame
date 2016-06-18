@@ -71,4 +71,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_lobby">Lobby</string>
     <string name="lobby_name">Lobby Name</string>
+    <string name="title_activity_device_list">DeviceList</string>
 </resources>

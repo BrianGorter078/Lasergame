@@ -1,5 +1,6 @@
 package com.briang.lasergame;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -31,6 +32,7 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
     ArrayList<JSONObject> roomList = new ArrayList<>();
     OkHttpPost okHttpPost = new OkHttpPost();
     String room;
+    BluetoothDevice device;
     private String password = "123";
     private String deviceId = "";
 
@@ -58,6 +60,7 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+        device = getIntent().getParcelableExtra("device");
         title.setText("Active Games");
         okHttpPost.delegate = this;
 
@@ -124,7 +127,7 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
                     Intent intent = new Intent(getApplicationContext(), Lobby.class);
                     intent.putExtra("roomName",room);
                     intent.putExtra("password",password);
-
+                    intent.putExtra("device",device);
 
                     postRequest("Add");
 

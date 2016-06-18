@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.briang.lasergame">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -15,40 +17,48 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Lobby"
             android:label="@string/title_activity_lobby"
             android:parentActivityName=".Joinlobby"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme">
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Joinlobby" />
         </activity>
-
         <activity
             android:name=".Joinlobby"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme">
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
-        <activity android:name=".Game"
+        <activity
+            android:name=".Game"
             android:parentActivityName=".Joinlobby"
             android:screenOrientation="portrait">
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Joinlobby" />
         </activity>
+        <activity
+            android:name=".DeviceList"
+            android:label="@string/title_activity_device_list"
+            android:theme="@style/MyMaterialTheme" />
+        <activity android:name=".TestActivity"></activity>
     </application>
+
 </manifest>

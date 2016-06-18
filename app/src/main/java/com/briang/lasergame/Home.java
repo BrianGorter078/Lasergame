@@ -1,6 +1,10 @@
 package com.briang.lasergame;
 
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,8 +32,16 @@ public class Home extends Fragment implements AsyncResponse
 
     OkHttpPost okHttpPost = new OkHttpPost();
 
+    BluetoothAdapter mBluetoothAdapter;
+    BluetoothDevice device;
+    BluetoothSocket mSocket;
     String room;
     String pass;
+    Button button;
+    Button button1;
+    @BindView(R.id.button2) Button btn;
+
+
     public Home() {
         // Required empty public constructor
     }
@@ -52,7 +64,10 @@ public class Home extends Fragment implements AsyncResponse
         final String deviceId = Settings.Secure.getString(getActivity().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
-        Button button = (Button) view.findViewById(R.id.button2);
+        button = (Button) view.findViewById(R.id.button2);
+        button.setVisibility(View.INVISIBLE);
+        button.setActivated(false);
+
         button.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -82,6 +97,7 @@ public class Home extends Fragment implements AsyncResponse
 
                                     Intent intent = new Intent(getContext(), Lobby.class);
                                     intent.putExtra("roomName", room);
+                                    intent.putExtra("device", device);
                                     startActivity(intent);
                                 }
                                 else{
@@ -99,12 +115,37 @@ public class Home extends Fragment implements AsyncResponse
         });
 
 
-        Button button1 = (Button) view.findViewById(R.id.button3);
+        button1 = (Button) view.findViewById(R.id.button3);
+        button1.setVisibility(View.INVISIBLE);
+        button1.setActivated(false);
+
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), Joinlobby.class);
+                intent.putExtra("device", device);
                 startActivity(intent);
+            }
+        });
+
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Log.d("Fuck you", "Fuck your bluetoothless phone you phony ass bitch. Buy a normal phone please");
+        }
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, 1);
+        }
+
+
+        Button test = (Button) view.findViewById(R.id.connectBluetooth);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), DeviceList.class);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -115,4 +156,22 @@ public class Home extends Fragment implements AsyncResponse
     @Override
     public void processFinish(String output) {
     }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                device = data.getParcelableExtra("device");
+                if(device != null) {
+                    button.setVisibility(View.VISIBLE);
+                    button.setActivated(true);
+
+                    button1.setVisibility(View.VISIBLE);
+                    button1.setActivated(true);
+                }
+            }
+        }
+    }
+
+
 }

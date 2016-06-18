@@ -1,5 +1,6 @@
 package com.briang.lasergame;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -36,6 +37,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     private String deviceId;
     private String[] players;
     private Timer waitingTimer;
+    BluetoothDevice device;
 
 
     @BindView(R.id.playerlist)
@@ -64,6 +66,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        device = getIntent().getParcelableExtra("device");
 
         title.setText(roomName);
 
@@ -86,6 +89,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
                 Intent intent = new Intent(getApplicationContext(), Game.class);
                 intent.putExtra("Roomname", players[i]);
+
 
 
             }
@@ -174,8 +178,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
                 for (int i = 0; i < arr.length(); i++) {
 
                     JSONObject obj = arr.getJSONObject(i);
-
-                    players[i] = obj.getString("playerid");
+                    players[i] = obj.getString("playerId");
 
                     if (players[i].contains(deviceId))
                     {
@@ -229,6 +232,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
         Intent intent = new Intent(this, Game.class);
         intent.putExtra("roomName", roomName);
+        intent.putExtra("device", device);
         startActivity(intent);
 
         cancelRunInBackground();

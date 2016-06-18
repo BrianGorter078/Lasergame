@@ -1,35 +1,24 @@
 package com.briang.lasergame;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.briang.lasergame.Connections.AsyncResponse;
-import com.briang.lasergame.Connections.OkHttpGet;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
 import java.util.UUID;
 
-public class Game extends AppCompatActivity implements AsyncResponse{
-
-    TextView textView;
-    TextView countDown;
-    Toolbar toolbar;
-    TextView title;
-    Toast leave;
-    String room;
+public class TestActivity extends Activity {
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mDevice;
@@ -37,90 +26,37 @@ public class Game extends AppCompatActivity implements AsyncResponse{
     ConnectThread mConnectThread;
     ConnectedThread mConnectedThread;
 
-    private Boolean firstTime = true;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
-
-        toolbar = (Toolbar) findViewById(R.id.gameToolbar);
-        title = (TextView) findViewById(R.id.toolbar_title);
-
-        setSupportActionBar(toolbar);
-
-        room = getIntent().getStringExtra("roomName");
-        title.setText(room);
-
-        countDown = (TextView) findViewById(R.id.countDown);
-        textView = (TextView) findViewById(R.id.textView);
-
-
-
-        getHealth();
-
-        new CountDownTimer(10000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                countDown.setText(millisUntilFinished / 1000 +"");
-            }
-
-            public void onFinish() {
-                textView.setVisibility(View.INVISIBLE);
-                textView.setClickable(false);
-
-                showHP(10);
-            }
-
-        }.start();
+        setContentView(R.layout.activity_test);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        BluetoothDevice device = getIntent().getParcelableExtra("device");
-        Log.d("device", device + "");
-        mConnectThread = new ConnectThread(device);
-        mConnectThread.start();
-
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(firstTime)
-        {
-            leave = Toast.makeText(getApplicationContext(),"Are you sure you want to leave this Game?", Toast.LENGTH_LONG);
-            leave.show();
-
-            firstTime = false;
+        if (mBluetoothAdapter == null) {
+            Log.d("Fuck you", "Fuck your bluetoothless phone you phony ass bitch. Buy a normal phone please");
         }
 
-        else {
-            firstTime = true;
-            leave.cancel();
-            super.onBackPressed();
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, 1);
         }
     }
 
-
-    public void getHealth()
-    {
-        OkHttpGet ok = new OkHttpGet();
-        ok.delegate = this;
-        ok.execute(ok.getHealth(room));
-
+    public void test(View view) {
+        Intent intent = new Intent(getApplicationContext(), DeviceList.class);
+        startActivityForResult(intent, 2);
     }
 
-    private void showHP(int hp)
-    {
-        countDown.setText("HP " + hp);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                BluetoothDevice device = data.getParcelableExtra("device");
+
+                mConnectThread = new ConnectThread(device);
+                mConnectThread.start();
+            }
+        }
     }
-
-
-    @Override
-    public void processFinish(String output) {
-
-    }
-
 
     Handler mHandler = new Handler() {
         @Override
@@ -220,5 +156,6 @@ public class Game extends AppCompatActivity implements AsyncResponse{
             } catch (IOException e) { }
         }
     }
-}
 
+
+}
