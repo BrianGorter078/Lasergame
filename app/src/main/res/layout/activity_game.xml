@@ -14,9 +14,14 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
+        android:textSize="30sp"
+        android:textColor="@color/colorAccent"
+        android:typeface="monospace"
         android:id="@+id/countDown"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false" />
 
     <TextView
         android:layout_width="wrap_content"
