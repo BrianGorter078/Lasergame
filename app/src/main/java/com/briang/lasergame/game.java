@@ -163,7 +163,6 @@ public class game extends AppCompatActivity implements AsyncResponse {
     @Override
     public void processFinish(String output) {
 
-        Log.d("output", output);
         if (!output.contains("<html>")){
             try {
                 JSONArray arr = new JSONArray(output);
@@ -176,11 +175,13 @@ public class game extends AppCompatActivity implements AsyncResponse {
 
                     if (players[i].contains(deviceId)) {
                         hp = obj.getInt("healthpoints");
-
-                        if (hp > 0) {
+                        if (players.length == 1 ){
+                            countDown.setText("You won the game!");
+                        }
+                        else if (hp > 0) {
                             showHP();
                         }
-                        else{
+                        else {
                             death();
                         }
                     }
@@ -302,5 +303,6 @@ public class game extends AppCompatActivity implements AsyncResponse {
     public void death() {
         runInBackground("a");
         countDown.setText("You are death");
+        postRemovePlayer();
     }
 }
