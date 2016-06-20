@@ -35,9 +35,9 @@ public class OkHttpGet extends AsyncTask<String, String, String> {
     }
 
     /**
-     * Creates a getString to get all players in a Game
+     * Creates a getString to get all players in a game
      * @param room roomName
-     * @return String to get all players in a Game
+     * @return String to get all players in a game
      */
     public String getPlayers(String room) {
 

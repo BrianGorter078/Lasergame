@@ -79,17 +79,20 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
     @Override
     public void onBackPressed() {
-        postRequest("Remove");
         super.onBackPressed();
     }
 
     @Override
     protected void onResume() {
         getRequest();
-
         super.onResume();
     }
 
+    @Override
+    protected void onRestart() {
+        getRequest();
+        super.onRestart();
+    }
 
 
     @Override
@@ -129,7 +132,7 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
                     intent.putExtra("password",password);
                     intent.putExtra("device",device);
 
-                    postRequest("Add");
+                    postRequest();
 
                     startActivity(intent);
 
@@ -157,18 +160,14 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
     }
 
-    public void postRequest(String doing)
+    public void postRequest()
     {
 
         OkHttpPost post = new OkHttpPost();
         post.delegate = this;
+        post.execute(post.addPlayer(room,password,deviceId));
 
-        if(doing.equals("Add")){
-            post.execute(post.addPlayer(room,password,deviceId));
-        }
-        else if(doing.equals("Remove")) {
-            post.execute(post.removePlayer(room,password,deviceId));
-        }
+
 
     }
 

@@ -70,7 +70,6 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
         title.setText(roomName);
 
-
         getPlayers();
 
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -87,7 +86,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Intent intent = new Intent(getApplicationContext(), Game.class);
+                Intent intent = new Intent(getApplicationContext(), game.class);
                 intent.putExtra("Roomname", players[i]);
 
 
@@ -139,7 +138,10 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     @Override
     public void onBackPressed() {
         cancelRunInBackground();
-        super.onBackPressed();
+        postRequest();
+        Intent intent = new Intent(this, Joinlobby.class);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -228,7 +230,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
         postStartGame();
 
-        Intent intent = new Intent(this, Game.class);
+        Intent intent = new Intent(this, game.class);
         intent.putExtra("roomName", roomName);
         intent.putExtra("device", device);
         startActivity(intent);

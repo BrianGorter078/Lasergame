@@ -45,7 +45,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".Game"
+            android:name=".game"
             android:parentActivityName="com.briang.lasergame.Joinlobby"
             android:screenOrientation="portrait">
 

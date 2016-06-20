@@ -11,6 +11,7 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +31,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class Game extends AppCompatActivity implements AsyncResponse {
+public class game extends AppCompatActivity implements AsyncResponse {
 
     TextView textView;
     TextView countDown;
@@ -38,10 +39,11 @@ public class Game extends AppCompatActivity implements AsyncResponse {
     TextView title;
     Toast leave;
     String room;
+    private Timer waitingTimer;
 
     String[] players;
     String deviceId;
-    Timer waitingTimer;
+
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mDevice;
     BluetoothSocket mSocket;
@@ -83,7 +85,7 @@ public class Game extends AppCompatActivity implements AsyncResponse {
             public void onFinish() {
                 textView.setVisibility(View.INVISIBLE);
                 textView.setClickable(false);
-                runInBackground();
+                runInBackground("start");
 
 
             }
@@ -102,7 +104,7 @@ public class Game extends AppCompatActivity implements AsyncResponse {
     @Override
     public void onBackPressed() {
         if (firstTime) {
-            leave = Toast.makeText(getApplicationContext(), "Are you sure you want to leave this Game?", Toast.LENGTH_LONG);
+            leave = Toast.makeText(getApplicationContext(), "Are you sure you want to leave this game?", Toast.LENGTH_LONG);
             leave.show();
             firstTime = false;
 
@@ -110,29 +112,29 @@ public class Game extends AppCompatActivity implements AsyncResponse {
             firstTime = true;
             leave.cancel();
             postRemovePlayer();
+            runInBackground("a");
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         }
     }
 
-    private void runInBackground() {
-        waitingTimer = new Timer();
-        waitingTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        getHealth();
-                    }
-                });
-            }
-        }, 0, 1000);
+    private void runInBackground(String state) {
+        if(state.equals("start")) {
+            waitingTimer = new Timer();
+            waitingTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            getHealth();
+                        }
+                    });
+                }
+            }, 0, 1000);
+        }
     }
 
-    private void cancelRunInBackground() {
-        waitingTimer.cancel();
-    }
 
     public void getHealth() {
         OkHttpGet ok = new OkHttpGet();
@@ -160,6 +162,8 @@ public class Game extends AppCompatActivity implements AsyncResponse {
 
     @Override
     public void processFinish(String output) {
+
+        Log.d("output", output);
         if (!output.contains("<html>")){
             try {
                 JSONArray arr = new JSONArray(output);
@@ -296,7 +300,7 @@ public class Game extends AppCompatActivity implements AsyncResponse {
 
 
     public void death() {
-        cancelRunInBackground();
+        runInBackground("a");
         countDown.setText("You are death");
     }
 }

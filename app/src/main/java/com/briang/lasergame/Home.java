@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 public class Home extends Fragment implements AsyncResponse
 {
 
-    OkHttpPost okHttpPost = new OkHttpPost();
+
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice device;
@@ -38,6 +38,7 @@ public class Home extends Fragment implements AsyncResponse
     Button button1;
     Button connectBluetooth;
 
+    String deviceId;
 
     public Home() {
         // Required empty public constructor
@@ -53,13 +54,13 @@ public class Home extends Fragment implements AsyncResponse
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        okHttpPost.delegate = this;
+
         ButterKnife.bind(getActivity());
 
         connectBluetooth = (Button) view.findViewById(R.id.connectBluetooth);
 
 
-        final String deviceId = Settings.Secure.getString(getActivity().getContentResolver(),
+        deviceId = Settings.Secure.getString(getActivity().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
         button = (Button) view.findViewById(R.id.button2);
@@ -90,15 +91,14 @@ public class Home extends Fragment implements AsyncResponse
                                     room = roomName.getText().toString();
                                     pass = password.getText().toString();
 
-
-
-                                    okHttpPost.execute(okHttpPost.createRoom(room,pass), okHttpPost.addPlayer(room,pass,deviceId));
-
+                                    createGame();
 
                                     Intent intent = new Intent(getContext(), Lobby.class);
                                     intent.putExtra("roomName", room);
                                     intent.putExtra("device", device);
                                     startActivity(intent);
+
+
                                 }
                                 else{
                                     Log.d("Error", "Empty");
@@ -176,5 +176,10 @@ public class Home extends Fragment implements AsyncResponse
         }
     }
 
+    private void createGame() {
+        OkHttpPost okHttpPost = new OkHttpPost();
+        okHttpPost.delegate = this;
+        okHttpPost.execute(okHttpPost.createRoom(room,pass), okHttpPost.addPlayer(room,pass,deviceId));
+    }
 
 }
