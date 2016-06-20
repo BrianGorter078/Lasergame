@@ -123,7 +123,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     protected void onStop() {
         Log.d("OnStop" , "Onstop");
         cancelRunInBackground();
-        postRequest();
+//        postRequest();
         super.onStop();
     }
 
