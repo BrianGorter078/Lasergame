@@ -7,19 +7,27 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.briang.lasergame.Connections.AsyncResponse;
 import com.briang.lasergame.Connections.OkHttpGet;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class Game extends AppCompatActivity implements AsyncResponse{
@@ -30,6 +38,10 @@ public class Game extends AppCompatActivity implements AsyncResponse{
     TextView title;
     Toast leave;
     String room;
+    int hp = 10;
+    private Timer waitingTimer;
+    String[] players;
+    String deviceId;
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mDevice;
@@ -37,12 +49,19 @@ public class Game extends AppCompatActivity implements AsyncResponse{
     ConnectThread mConnectThread;
     ConnectedThread mConnectedThread;
 
+    public  BluetoothSocket mmSocket;
+    public  BluetoothDevice mmDevice;
+    public UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+
     private Boolean firstTime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
 
         toolbar = (Toolbar) findViewById(R.id.gameToolbar);
         title = (TextView) findViewById(R.id.toolbar_title);
@@ -57,6 +76,7 @@ public class Game extends AppCompatActivity implements AsyncResponse{
 
 
 
+
         getHealth();
 
         new CountDownTimer(10000, 1000) {
@@ -68,8 +88,9 @@ public class Game extends AppCompatActivity implements AsyncResponse{
             public void onFinish() {
                 textView.setVisibility(View.INVISIBLE);
                 textView.setClickable(false);
+                countDown.setText("HP " + hp);
+                runInBackground();
 
-                showHP(10);
             }
 
         }.start();
@@ -101,6 +122,20 @@ public class Game extends AppCompatActivity implements AsyncResponse{
         }
     }
 
+    private void runInBackground() {
+        Log.d("run" , "run");
+        waitingTimer = new Timer();
+        waitingTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        getPlayersHp();
+                    }
+                });
+            }
+        }, 0, 1000);
+    }
 
     public void getHealth()
     {
@@ -110,15 +145,38 @@ public class Game extends AppCompatActivity implements AsyncResponse{
 
     }
 
-    private void showHP(int hp)
+    private void showHP()
     {
-        countDown.setText("HP " + hp);
+        hp = hp - 1;
+        countDown.setText("Hp: " + hp);
     }
 
 
     @Override
     public void processFinish(String output) {
+        try {
+            JSONArray arr = new JSONArray(output);
+            players = new String[arr.length()];
 
+
+            for (int i = 0; i < arr.length(); i++) {
+
+                JSONObject obj = arr.getJSONObject(i);
+                players[i] = obj.getString("playerid");
+
+                if (players[i].contains(deviceId))
+                {
+                    players[i] = "You";
+                }
+            }
+
+            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, R.layout.playerlist, R.id.playerName, players);
+            playerlist.setAdapter(itemsAdapter);
+
+
+        } catch (JSONException e) {
+
+        }
     }
 
 
@@ -134,15 +192,14 @@ public class Game extends AppCompatActivity implements AsyncResponse{
                     String writeMessage = new String(writeBuf);
                     writeMessage = writeMessage.substring(begin, end);
                     Log.d("Numbers", writeMessage);
+                    showHP();
                     break;
             }
         }
     };
 
     private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
-        private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+
         public ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
             mmDevice = device;
@@ -156,10 +213,7 @@ public class Game extends AppCompatActivity implements AsyncResponse{
             try {
                 mmSocket.connect();
             } catch (IOException connectException) {
-                try {
-                    mSocket.close();
-                } catch (IOException closeException) { }
-                return;
+               
             }
 
             mConnectedThread = new ConnectedThread(mmSocket);
@@ -219,6 +273,13 @@ public class Game extends AppCompatActivity implements AsyncResponse{
                 mmSocket.close();
             } catch (IOException e) { }
         }
+    }
+
+
+    public void getPlayersHp() {
+        OkHttpGet okHttpGet = new OkHttpGet();
+        okHttpGet.delegate = this;
+        okHttpGet.execute(okHttpGet.getHealth(room));
     }
 }
 

@@ -61,6 +61,8 @@ public class TestActivity extends Activity {
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
+            Log.d("handler", "handler called");
             byte[] writeBuf = (byte[]) msg.obj;
             int begin = (int)msg.arg1;
             int end = (int)msg.arg2;

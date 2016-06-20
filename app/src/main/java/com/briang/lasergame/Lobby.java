@@ -158,7 +158,6 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
     @Override
     public void processFinish(String output) {
-        Log.d("players", output);
 
         if (output.equals("true") || output.equals("false") )
         {
@@ -169,7 +168,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
             else{}
         }
 
-        if (!output.contains("<html>"))
+        else if (!output.contains("<html>"))
             try {
                 JSONArray arr = new JSONArray(output);
                 players = new String[arr.length()];
@@ -178,7 +177,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
                 for (int i = 0; i < arr.length(); i++) {
 
                     JSONObject obj = arr.getJSONObject(i);
-                    players[i] = obj.getString("playerId");
+                    players[i] = obj.getString("playerid");
 
                     if (players[i].contains(deviceId))
                     {
@@ -187,8 +186,6 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
                 }
 
                 ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, R.layout.playerlist, R.id.playerName, players);
-
-                itemsAdapter.setNotifyOnChange(true);
                 playerlist.setAdapter(itemsAdapter);
 
 

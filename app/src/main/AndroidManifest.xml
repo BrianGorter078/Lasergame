@@ -35,7 +35,7 @@
         </activity>
         <activity
             android:name=".Joinlobby"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.briang.lasergame.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme">
 
@@ -46,13 +46,13 @@
         </activity>
         <activity
             android:name=".Game"
-            android:parentActivityName=".Joinlobby"
+            android:parentActivityName="com.briang.lasergame.Joinlobby"
             android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Joinlobby" />
+                android:value="com.briang.lasergame.Joinlobby" />
         </activity>
         <activity
             android:name=".DeviceList"
