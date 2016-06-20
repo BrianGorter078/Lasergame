@@ -221,6 +221,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
 
     public void StartGame(View v) {
      startGame();
+
     }
 
     public void startGame(){
@@ -231,7 +232,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         intent.putExtra("roomName", roomName);
         intent.putExtra("device", device);
         startActivity(intent);
-
+        finish();
         cancelRunInBackground();
     }
 }

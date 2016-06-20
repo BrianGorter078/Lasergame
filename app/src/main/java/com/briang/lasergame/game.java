@@ -3,6 +3,7 @@ package com.briang.lasergame;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -10,14 +11,13 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.briang.lasergame.Connections.AsyncResponse;
 import com.briang.lasergame.Connections.OkHttpGet;
+import com.briang.lasergame.Connections.OkHttpPost;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +30,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class Game extends AppCompatActivity implements AsyncResponse{
+public class Game extends AppCompatActivity implements AsyncResponse {
 
     TextView textView;
     TextView countDown;
@@ -38,19 +38,18 @@ public class Game extends AppCompatActivity implements AsyncResponse{
     TextView title;
     Toast leave;
     String room;
-    int hp = 10;
-    private Timer waitingTimer;
+
     String[] players;
     String deviceId;
-
+    Timer waitingTimer;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mDevice;
     BluetoothSocket mSocket;
     ConnectThread mConnectThread;
     ConnectedThread mConnectedThread;
-
-    public  BluetoothSocket mmSocket;
-    public  BluetoothDevice mmDevice;
+    int hp;
+    public BluetoothSocket mmSocket;
+    public BluetoothDevice mmDevice;
     public UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
     private Boolean firstTime = true;
@@ -75,21 +74,17 @@ public class Game extends AppCompatActivity implements AsyncResponse{
         textView = (TextView) findViewById(R.id.textView);
 
 
-
-
-        getHealth();
-
         new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                countDown.setText(millisUntilFinished / 1000 +"");
+                countDown.setText(millisUntilFinished / 1000 + "");
             }
 
             public void onFinish() {
                 textView.setVisibility(View.INVISIBLE);
                 textView.setClickable(false);
-                countDown.setText("HP " + hp);
                 runInBackground();
+
 
             }
 
@@ -98,7 +93,6 @@ public class Game extends AppCompatActivity implements AsyncResponse{
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         BluetoothDevice device = getIntent().getParcelableExtra("device");
-        Log.d("device", device + "");
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
 
@@ -107,75 +101,89 @@ public class Game extends AppCompatActivity implements AsyncResponse{
 
     @Override
     public void onBackPressed() {
-        if(firstTime)
-        {
-            leave = Toast.makeText(getApplicationContext(),"Are you sure you want to leave this Game?", Toast.LENGTH_LONG);
+        if (firstTime) {
+            leave = Toast.makeText(getApplicationContext(), "Are you sure you want to leave this Game?", Toast.LENGTH_LONG);
             leave.show();
-
             firstTime = false;
-        }
 
-        else {
+        } else {
             firstTime = true;
             leave.cancel();
-            super.onBackPressed();
+            postRemovePlayer();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
     private void runInBackground() {
-        Log.d("run" , "run");
         waitingTimer = new Timer();
         waitingTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        getPlayersHp();
+                        getHealth();
                     }
                 });
             }
         }, 0, 1000);
     }
 
-    public void getHealth()
-    {
+    private void cancelRunInBackground() {
+        waitingTimer.cancel();
+    }
+
+    public void getHealth() {
         OkHttpGet ok = new OkHttpGet();
         ok.delegate = this;
         ok.execute(ok.getHealth(room));
-
     }
 
-    private void showHP()
+    public void postHit() {
+        OkHttpPost ok = new OkHttpPost();
+        ok.delegate = this;
+        ok.execute(ok.removeHp(room, deviceId));
+    }
+
+    public void postRemovePlayer()
     {
-        hp = hp - 1;
-        countDown.setText("Hp: " + hp);
+        OkHttpPost ok = new OkHttpPost();
+        ok.delegate = this;
+        ok.execute(ok.removePlayer(room,"123", deviceId));
+    }
+
+    private void showHP() {
+        countDown.setText("HP: " + hp);
     }
 
 
     @Override
     public void processFinish(String output) {
-        try {
-            JSONArray arr = new JSONArray(output);
-            players = new String[arr.length()];
+        if (!output.contains("<html>")){
+            try {
+                JSONArray arr = new JSONArray(output);
+                players = new String[arr.length()];
 
+                for (int i = 0; i < arr.length(); i++) {
 
-            for (int i = 0; i < arr.length(); i++) {
+                    JSONObject obj = arr.getJSONObject(i);
+                    players[i] = obj.getString("id");
 
-                JSONObject obj = arr.getJSONObject(i);
-                players[i] = obj.getString("playerid");
+                    if (players[i].contains(deviceId)) {
+                        hp = obj.getInt("healthpoints");
 
-                if (players[i].contains(deviceId))
-                {
-                    players[i] = "You";
+                        if (hp > 0) {
+                            showHP();
+                        }
+                        else{
+                            death();
+                        }
+                    }
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, R.layout.playerlist, R.id.playerName, players);
-            playerlist.setAdapter(itemsAdapter);
-
-
-        } catch (JSONException e) {
-
         }
     }
 
@@ -184,15 +192,15 @@ public class Game extends AppCompatActivity implements AsyncResponse{
         @Override
         public void handleMessage(Message msg) {
             byte[] writeBuf = (byte[]) msg.obj;
-            int begin = (int)msg.arg1;
-            int end = (int)msg.arg2;
+            int begin = (int) msg.arg1;
+            int end = (int) msg.arg2;
 
-            switch(msg.what) {
+            switch (msg.what) {
                 case 1:
                     String writeMessage = new String(writeBuf);
                     writeMessage = writeMessage.substring(begin, end);
-                    Log.d("Numbers", writeMessage);
-                    showHP();
+                    postHit();
+                    getHealth();
                     break;
             }
         }
@@ -205,24 +213,28 @@ public class Game extends AppCompatActivity implements AsyncResponse{
             mmDevice = device;
             try {
                 tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
             mmSocket = tmp;
         }
+
         public void run() {
             mBluetoothAdapter.cancelDiscovery();
             try {
                 mmSocket.connect();
             } catch (IOException connectException) {
-               
+
             }
 
             mConnectedThread = new ConnectedThread(mmSocket);
             mConnectedThread.start();
         }
+
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -230,6 +242,7 @@ public class Game extends AppCompatActivity implements AsyncResponse{
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
@@ -237,10 +250,12 @@ public class Game extends AppCompatActivity implements AsyncResponse{
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
+
         public void run() {
             byte[] buffer = new byte[1024];
             int begin = 0;
@@ -248,11 +263,11 @@ public class Game extends AppCompatActivity implements AsyncResponse{
             while (true) {
                 try {
                     bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
-                    for(int i = begin; i < bytes; i++) {
-                        if(buffer[i] == "#".getBytes()[0]) {
+                    for (int i = begin; i < bytes; i++) {
+                        if (buffer[i] == "#".getBytes()[0]) {
                             mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
                             begin = i + 1;
-                            if(i == bytes - 1) {
+                            if (i == bytes - 1) {
                                 bytes = 0;
                                 begin = 0;
                             }
@@ -263,23 +278,25 @@ public class Game extends AppCompatActivity implements AsyncResponse{
                 }
             }
         }
+
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
+
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
     }
 
 
-    public void getPlayersHp() {
-        OkHttpGet okHttpGet = new OkHttpGet();
-        okHttpGet.delegate = this;
-        okHttpGet.execute(okHttpGet.getHealth(room));
+    public void death() {
+        cancelRunInBackground();
+        countDown.setText("You are death");
     }
 }
-

@@ -94,5 +94,11 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
 
         return startGame;
     }
+
+    public String removeHp(String room, String id)
+    {
+        final String removeHp = "http://laser-web.herokuapp.com/healthpoints/"+ room +"/" + id;
+        return removeHp;
+    }
 }
 

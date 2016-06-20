@@ -10,18 +10,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
 import java.util.UUID;
 
 public class TestActivity extends Activity {
 
     BluetoothAdapter mBluetoothAdapter;
-    BluetoothDevice mDevice;
     BluetoothSocket mSocket;
     ConnectThread mConnectThread;
     ConnectedThread mConnectedThread;

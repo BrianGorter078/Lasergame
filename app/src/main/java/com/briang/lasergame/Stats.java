@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 public class Stats extends Fragment{
 
-
     String deviceId;
     public Stats() {
         // Required empty public constructor

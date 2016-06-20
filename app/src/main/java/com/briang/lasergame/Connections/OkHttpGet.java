@@ -46,7 +46,7 @@ public class OkHttpGet extends AsyncTask<String, String, String> {
     }
 
     public String getHealth(String room){
-        final String getHealth = "http://laser-web.herokuapp.com/healtpoints/" + room;
+        final String getHealth = "http://laser-web.herokuapp.com/healthpoints/" + room;
         return getHealth;
     }
 

@@ -17,13 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.briang.lasergame.Connections.AsyncResponse;
-import com.briang.lasergame.Connections.OkHttpGet;
 import com.briang.lasergame.Connections.OkHttpPost;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -39,7 +36,7 @@ public class Home extends Fragment implements AsyncResponse
     String pass;
     Button button;
     Button button1;
-    @BindView(R.id.button2) Button btn;
+    Button connectBluetooth;
 
 
     public Home() {
@@ -56,10 +53,11 @@ public class Home extends Fragment implements AsyncResponse
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        okHttpPost.delegate = this;
         ButterKnife.bind(getActivity());
 
-        okHttpPost.delegate = this;
+        connectBluetooth = (Button) view.findViewById(R.id.connectBluetooth);
+
 
         final String deviceId = Settings.Secure.getString(getActivity().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -67,6 +65,8 @@ public class Home extends Fragment implements AsyncResponse
         button = (Button) view.findViewById(R.id.button2);
         button.setVisibility(View.INVISIBLE);
         button.setActivated(false);
+
+
 
         button.setOnClickListener(new View.OnClickListener()
         {
@@ -168,6 +168,9 @@ public class Home extends Fragment implements AsyncResponse
 
                     button1.setVisibility(View.VISIBLE);
                     button1.setActivated(true);
+
+                    connectBluetooth.setVisibility(View.INVISIBLE);
+                    connectBluetooth.setActivated(false);
                 }
             }
         }
