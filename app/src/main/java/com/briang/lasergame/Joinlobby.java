@@ -1,14 +1,19 @@
 package com.briang.lasergame;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -104,17 +109,16 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
             final ArrayList<Room> arrayOfUsers = new ArrayList<>();
 
 
-            for(int i = 0; i < arr.length(); i++)
-            {
+            for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
 
 
                 roomList.add(obj);
 
-                Room r = new Room(roomList.get(i).getString("roomname"), roomList.get(i).getString("players"),roomList.get(i).getBoolean("state"));
+                Room r = new Room(roomList.get(i).getString("roomname"), roomList.get(i).getString("players"), roomList.get(i).getBoolean("state"));
 
-                if(r.state)
-                arrayOfUsers.add(r);
+                if (r.state)
+                    arrayOfUsers.add(r);
 
             }
 
@@ -123,18 +127,46 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
 
             joinLobbylist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                    room = arrayOfUsers.get(i).roomName;
+                    final View checkBoxView = View.inflate(getApplicationContext(), R.layout.joinlobby, null);
 
-                    Intent intent = new Intent(getApplicationContext(), Lobby.class);
-                    intent.putExtra("roomName",room);
-                    intent.putExtra("password",password);
-                    intent.putExtra("device",device);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Joinlobby.this);
 
-                    postRequest();
+                    builder.setTitle("Join Room")
+                            .setView(checkBoxView)
 
-                    startActivity(intent);
+                            .setCancelable(false)
+                            .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                    EditText passwordText = (EditText) checkBoxView.findViewById(R.id.password);
+
+                                    if (!passwordText.getText().toString().isEmpty()) {
+                                        password = passwordText.getText().toString();
+
+                                        room = arrayOfUsers.get(i).roomName;
+
+                                        Intent intent = new Intent(getApplicationContext(), Lobby.class);
+                                        intent.putExtra("roomName", room);
+                                        intent.putExtra("password", password);
+                                        intent.putExtra("device", device);
+
+                                        postRequest();
+
+                                        startActivity(intent);
+                                    } else {
+                                        Log.d("Error", "Empty");
+
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            }).show();
+
 
                 }
             });
@@ -144,29 +176,24 @@ public class Joinlobby extends AppCompatActivity implements AsyncResponse {
         }
 
 
-
-
     }
 
 
     /**
      * Executes a http getRequest from the requested URl
      */
-    public void getRequest()
-    {
+    public void getRequest() {
         OkHttpGet ok = new OkHttpGet();
         ok.delegate = this;
         ok.execute(ok.getGames());
 
     }
 
-    public void postRequest()
-    {
+    public void postRequest() {
 
         OkHttpPost post = new OkHttpPost();
         post.delegate = this;
-        post.execute(post.addPlayer(room,password,deviceId));
-
+        post.execute(post.addPlayer(room, password, deviceId));
 
 
     }

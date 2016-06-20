@@ -218,7 +218,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
     public void postStartGame(){
         OkHttpPost okHttpPost = new OkHttpPost();
         okHttpPost.delegate = this;
-        okHttpPost.execute(okHttpPost.startGame(roomName));
+        okHttpPost.execute(okHttpPost.startGame(roomName,password));
     }
 
     public void StartGame(View v) {
@@ -233,6 +233,7 @@ public class Lobby extends AppCompatActivity implements AsyncResponse {
         Intent intent = new Intent(this, game.class);
         intent.putExtra("roomName", roomName);
         intent.putExtra("device", device);
+        intent.putExtra("password", password);
         startActivity(intent);
         finish();
         cancelRunInBackground();

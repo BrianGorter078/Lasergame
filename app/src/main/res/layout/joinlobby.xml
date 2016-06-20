@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:textColor="@color/cardview_shadow_start_color"
         android:layout_gravity="center"
         android:hint="Lobby Password"
         android:layout_marginTop="20dp"

@@ -39,6 +39,7 @@ public class game extends AppCompatActivity implements AsyncResponse {
     TextView title;
     Toast leave;
     String room;
+    String password;
     private Timer waitingTimer;
 
     String[] players;
@@ -70,6 +71,7 @@ public class game extends AppCompatActivity implements AsyncResponse {
         setSupportActionBar(toolbar);
 
         room = getIntent().getStringExtra("roomName");
+        password = getIntent().getStringExtra("password");
         title.setText(room);
 
         countDown = (TextView) findViewById(R.id.countDown);
@@ -152,7 +154,7 @@ public class game extends AppCompatActivity implements AsyncResponse {
     {
         OkHttpPost ok = new OkHttpPost();
         ok.delegate = this;
-        ok.execute(ok.removePlayer(room,"123", deviceId));
+        ok.execute(ok.removePlayer(room,password, deviceId));
     }
 
     private void showHP() {

@@ -20,7 +20,7 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
 
 
     @Override
-    protected String doInBackground(String...url)  {
+    protected String doInBackground(String... url) {
         {
             for (int i = 0; i < url.length; i++) {
 
@@ -45,7 +45,7 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
         }
     }
 
-    protected void onPostExecute(String result){
+    protected void onPostExecute(String result) {
 //        delegate.processFinish(result);
 
     }
@@ -53,25 +53,24 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
     /**
      * Creates a PostString to add a player
      *
-     * @param room roomname
+     * @param room     roomname
      * @param password password of the room
      * @param deviceId Id of the device
      * @return PostString to add a player
      */
     public String addPlayer(String room, String password, String deviceId) {
-        final String addPlayer = "http://laser-web.herokuapp.com/game/" + room + "/" + password + "/"+ deviceId;
+        final String addPlayer = "http://laser-web.herokuapp.com/game/" + room + "/" + password + "/" + deviceId;
         return addPlayer;
     }
 
     /**
-     *
      * @param room
      * @param password
      * @param deviceId
      * @return
      */
-    public String removePlayer(String room, String password, String deviceId){
-        final String removePlayer = "http://laser-web.herokuapp.com/removeplayer/" + room + "/" + password + "/"+ deviceId;
+    public String removePlayer(String room, String password, String deviceId) {
+        final String removePlayer = "http://laser-web.herokuapp.com/removeplayer/" + room + "/" + password + "/" + deviceId;
         return removePlayer;
     }
 
@@ -82,22 +81,20 @@ public class OkHttpPost extends AsyncTask<String, String, String> {
      * @param password password of the rooom
      * @return PostString to create a room
      */
-    public String createRoom(String roomName, String password)
-    {
+    public String createRoom(String roomName, String password) {
         final String createroom = "http://laser-web.herokuapp.com/newgame/" + roomName + "/" + password;
 
         return createroom;
     }
 
-    public String startGame(String roomName){
-        final String startGame = "http://laser-web.herokuapp.com/startgame/"+ roomName + "/123/true";
+    public String startGame(String roomName, String password) {
+        final String startGame = "http://laser-web.herokuapp.com/startgame/" + roomName + "/" + password + "/true";
 
         return startGame;
     }
 
-    public String removeHp(String room, String id)
-    {
-        final String removeHp = "http://laser-web.herokuapp.com/healthpoints/"+ room +"/" + id;
+    public String removeHp(String room, String id) {
+        final String removeHp = "http://laser-web.herokuapp.com/healthpoints/" + room + "/" + id;
         return removeHp;
     }
 }
